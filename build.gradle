@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.3.0/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.4.0/dependencies.gradle'
     ext {
         springBootVersion = '2.0.3.RELEASE'
     }
@@ -25,6 +25,8 @@ apply plugin: 'io.spring.dependency-management'
 group = 'no.fint'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+version = '0.0.1-SNAPSHOT'
+
 
 repositories {
     mavenCentral()
@@ -32,15 +34,9 @@ repositories {
     jcenter()
     repositories {
         maven {
-            url "http://dl.bintray.com/rfkikt/maven"
-        }
-    }
-    repositories {
-        maven {
             url "http://dl.bintray.com/fint/maven"
         }
     }
-    mavenLocal()
 }
 
 

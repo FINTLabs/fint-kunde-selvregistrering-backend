@@ -1,8 +1,10 @@
-package no.fint.customer.selfregister;
+package no.fint.portal;
 
+import com.github.springfox.loader.EnableSpringfox;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@EnableSpringfox
 @SpringBootApplication
 public class Application {
 
