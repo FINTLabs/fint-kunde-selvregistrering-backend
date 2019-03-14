@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker pull dtr.fintlabs.no/beta/kunde-selvregistrering-frontend:latest"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker pull fintlabs.azurecr.io/kunde-selvregistrering-frontend:latest"
                     sh "docker build --tag ${GIT_COMMIT} ."
                 }
             }
@@ -12,32 +12,35 @@ pipeline {
         stage('Publish') {
             when { branch 'master' }
             steps {
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/kunde-selvregistrering-backend:latest"
-                    sh "docker push 'dtr.fintlabs.no/beta/kunde-selvregistrering-backend:latest'"
-                }
-                withDockerServer([credentialsId: "ucp-fintlabs-jenkins-bundle", uri: "tcp://ucp.fintlabs.no:443"]) {
-                    //sh "docker service update kunde-selvregistrering-backend-beta_kunde-selvregistrering-backend --image dtr.fintlabs.no/beta/kunde-selvregistrering-backend:latest --detach=false"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/kunde-selvregistrering:build.${BUILD_NUMBER}"
+                    sh "docker push fintlabs.azurecr.io/kunde-selvregistrering:build.${BUILD_NUMBER}"
                 }
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/kunde-selvregistrering-backend:${BRANCH_NAME}"
-                    sh "docker push 'dtr.fintlabs.no/beta/kunde-selvregistrering-backend:${BRANCH_NAME}'"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/kunde-selvregistrering:${BRANCH_NAME}.${BUILD_NUMBER}"
+                    sh "docker push fintlabs.azurecr.io/kunde-selvregistrering:${BRANCH_NAME}.${BUILD_NUMBER}"
                 }
             }
         }
-        stage('Publish Tag') {
-            when { buildingTag() }
+        stage('Publish Version') {
+            when {
+                tag pattern: "v\\d+\\.\\d+\\.\\d+(-\\w+-\\d+)?", comparator: "REGEXP"
+            }
             steps {
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/kunde-selvregistrering-backend:${TAG_NAME}"
-                    sh "docker push 'dtr.fintlabs.no/beta/kunde-selvregistrering-backend:${TAG_NAME}'"
+                script {
+                    VERSION = TAG_NAME[1..-1]
+                }
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/kunde-selvregistrering:${VERSION}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/kunde-selvregistrering:${VERSION}"
                 }
             }
         }
     }
 }
+

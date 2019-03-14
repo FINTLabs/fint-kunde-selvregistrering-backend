@@ -1,4 +1,4 @@
-FROM dtr.fintlabs.no/beta/kunde-selvregistrering-frontend:latest as client
+FROM fintlabs.azurecr.io/kunde-selvregistrering-frontend:latest as client
 
 FROM gradle:4.8.0-jdk8-alpine as builder
 USER root
