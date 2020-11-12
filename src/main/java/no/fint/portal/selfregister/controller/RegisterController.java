@@ -33,7 +33,12 @@ public class RegisterController {
 
     @ApiOperation("Add new contact")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Contact> addContact(@RequestBody final Contact contact) {
+    public ResponseEntity<Contact> addContact(
+            @RequestHeader(name = "x-nin") String nin,
+            @RequestBody final Contact contact) {
+        if (!nin.equals(contact.getNin())) {
+            throw new UpdateEntityMismatchException("Invalid NIN");
+        }
         log.info("Contact: {}", contact);
 
         if (contactService.addContact(contact)) {
@@ -49,7 +54,12 @@ public class RegisterController {
 
     @ApiOperation("Update contact")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Contact> updateContact(@RequestBody final Contact contact) {
+    public ResponseEntity<Contact> updateContact(
+            @RequestHeader(name = "x-nin") String nin,
+            @RequestBody final Contact contact) {
+        if (!nin.equals(contact.getNin())) {
+            throw new UpdateEntityMismatchException("Invalid NIN");
+        }
         log.info("Contact: {}", contact);
 
         if (contactService.updateContact(contact)) {
@@ -59,7 +69,7 @@ public class RegisterController {
         throw new RuntimeException(
                 ServletUriComponentsBuilder
                         .fromCurrentRequest().path("/{nin}")
-                        .buildAndExpand(contact.getNin()).toUri().toString()
+                        .buildAndExpand(nin).toUri().toString()
         );
     }
 
