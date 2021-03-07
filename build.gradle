@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.4.0/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.8.0/dependencies.gradle'
     ext {
         springBootVersion = '2.0.3.RELEASE'
     }
@@ -46,7 +46,10 @@ dependencies {
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('no.fint:fint-portal-api:3.0.0-rc-20')
 
-    compileOnly('org.projectlombok:lombok')
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    runtime('org.springframework.ldap:spring-ldap-test')
+    runtime("com.unboundid:unboundid-ldapsdk:3.1.1")
 }

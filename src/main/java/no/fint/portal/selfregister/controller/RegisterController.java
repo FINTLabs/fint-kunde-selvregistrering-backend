@@ -19,12 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.UnknownHostException;
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @Api(tags = "Self Register")
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api/self/register")
 public class RegisterController {
 
@@ -33,8 +31,13 @@ public class RegisterController {
 
 
     @ApiOperation("Add new contact")
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Contact> addContact(@RequestBody final Contact contact) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Contact> addContact(
+            @RequestHeader(name = "x-nin") String nin,
+            @RequestBody final Contact contact) {
+        if (!nin.equals(contact.getNin())) {
+            throw new UpdateEntityMismatchException("Invalid NIN");
+        }
         log.info("Contact: {}", contact);
 
         if (contactService.addContact(contact)) {
@@ -48,15 +51,35 @@ public class RegisterController {
         );
     }
 
+    @ApiOperation("Update contact")
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Contact> updateContact(
+            @RequestHeader(name = "x-nin") String nin,
+            @RequestBody final Contact contact) {
+        if (!nin.equals(contact.getNin())) {
+            throw new UpdateEntityMismatchException("Invalid NIN");
+        }
+        log.info("Contact: {}", contact);
+
+        if (contactService.updateContact(contact)) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(contact);
+        }
+
+        throw new RuntimeException(
+                ServletUriComponentsBuilder
+                        .fromCurrentRequest().path("/{nin}")
+                        .buildAndExpand(nin).toUri().toString()
+        );
+    }
+
     @GetMapping
-    public ResponseEntity checkIfContactExits(@RequestHeader(name = "x-nin") String nin) {
-        Optional<Contact> contact = contactService.getContact(nin);
+    public Contact getContact(@RequestHeader(name = "x-nin") String nin) {
+        return contactService.getContact(nin).orElseThrow(() -> new EntityNotFoundException(nin));
+    }
 
-        contact.ifPresent(c -> {
-            throw new EntityFoundException(String.format("Hei %s %s! Du er allerede registrert.", c.getFirstName(), c.getLastName()));
-        });
-
-        throw new EntityNotFoundException(nin);
+    @DeleteMapping
+    public void deleteContact(@RequestHeader(name = "x-nin") String nin) {
+        contactService.getContact(nin).ifPresent(contactService::deleteContact);
     }
 
 
