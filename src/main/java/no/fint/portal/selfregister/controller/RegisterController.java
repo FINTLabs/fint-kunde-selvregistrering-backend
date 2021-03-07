@@ -10,7 +10,6 @@ import no.fint.portal.exceptions.UpdateEntityMismatchException;
 import no.fint.portal.model.ErrorResponse;
 import no.fint.portal.model.contact.Contact;
 import no.fint.portal.model.contact.ContactService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +25,15 @@ import java.net.UnknownHostException;
 @RequestMapping(value = "/api/self/register")
 public class RegisterController {
 
-    @Autowired
-    private ContactService contactService;
+    private final ContactService contactService;
+
+    public RegisterController(ContactService contactService) {
+        this.contactService = contactService;
+    }
 
 
     @ApiOperation("Add new contact")
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> addContact(
             @RequestHeader(name = "x-nin") String nin,
             @RequestBody final Contact contact) {
@@ -52,7 +54,7 @@ public class RegisterController {
     }
 
     @ApiOperation("Update contact")
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> updateContact(
             @RequestHeader(name = "x-nin") String nin,
             @RequestBody final Contact contact) {
@@ -87,27 +89,27 @@ public class RegisterController {
     // Exception handlers
     //
     @ExceptionHandler(UpdateEntityMismatchException.class)
-    public ResponseEntity handleUpdateEntityMismatch(Exception e) {
+    public ResponseEntity<ErrorResponse> handleUpdateEntityMismatch(Exception e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity handleEntityNotFound(Exception e) {
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(EntityFoundException.class)
-    public ResponseEntity handleEntityFound(Exception e) {
+    public ResponseEntity<ErrorResponse> handleEntityFound(Exception e) {
         return ResponseEntity.status(HttpStatus.FOUND).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(NameNotFoundException.class)
-    public ResponseEntity handleNameNotFound(Exception e) {
+    public ResponseEntity<ErrorResponse> handleNameNotFound(Exception e) {
         return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(UnknownHostException.class)
-    public ResponseEntity handleUnkownHost(Exception e) {
+    public ResponseEntity<ErrorResponse> handleUnkownHost(Exception e) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(e.getMessage()));
     }
 }
