@@ -23,7 +23,6 @@ import java.net.UnknownHostException;
 @Slf4j
 @RestController
 @Api(tags = "Self Register")
-@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api/self/register")
 public class RegisterController {
 
