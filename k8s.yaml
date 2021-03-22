@@ -39,7 +39,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: kunde-selvregistrering
-        image: fintlabs.azurecr.io/kunde-selvregistrering:${VERSION}
+        image: fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}
         envFrom:
           - configMapRef:
               name: fint-environment
