@@ -12,19 +12,27 @@ pipeline {
         stage('Publish') {
             when { branch 'master' }
             steps {
-                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
-                    sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/kunde-selvregistrering:build.${BUILD_NUMBER}"
-                    sh "docker push fintlabsacr.azurecr.io/kunde-selvregistrering:build.${BUILD_NUMBER}"
+                script {
+                    VERSION = GIT_COMMIT[0..6]
                 }
+                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
+                    sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}"
+                    sh "docker push fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}"
+                }
+                kubernetesDeploy configs: 'k8s.yaml', kubeconfigId: 'aks-beta-fint'
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
-                    sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/kunde-selvregistrering:${BRANCH_NAME}.${BUILD_NUMBER}"
-                    sh "docker push fintlabsacr.azurecr.io/kunde-selvregistrering:${BRANCH_NAME}.${BUILD_NUMBER}"
+                script {
+                    VERSION = BRANCH_NAME + '.' + GIT_COMMIT[0..6]
                 }
+                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
+                    sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}"
+                    sh "docker push fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}"
+                }
+                kubernetesDeploy configs: 'k8s.yaml', kubeconfigId: 'aks-beta-fint'
             }
         }
         stage('Publish Version') {
@@ -39,6 +47,7 @@ pipeline {
                 withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
                     sh "docker push fintlabsacr.azurecr.io/kunde-selvregistrering:${VERSION}"
                 }
+                kubernetesDeploy configs: 'k8s.yaml', kubeconfigId: 'aks-beta-fint'
             }
         }
     }
