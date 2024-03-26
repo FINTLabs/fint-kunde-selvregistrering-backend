@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - onepassword.yaml
+commonLabels:
+  app.kubernetes.io/name: fint-kunde-selvregistrering-backend
+  app.kubernetes.io/instance: fint-kunde-selvregistrering-backend
+  app.kubernetes.io/version: "latest"
+  app.kubernetes.io/component: fint-kunde-selvregistrering-backend
+  app.kubernetes.io/part-of: fint-core
+  fintlabs.no/team: core
+  fintlabs.no/org-id: fintlabs.no
