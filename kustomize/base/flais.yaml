@@ -18,3 +18,7 @@ spec:
   envFrom:
     - secretRef:
         name: fint-portal-user
+  ingress:
+    enabled: true
+    middlewares:
+      - fint-kunde-selvregistrering-sso
