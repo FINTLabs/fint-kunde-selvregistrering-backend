@@ -1,4 +1,4 @@
-FROM fintlabsacr.azurecr.io/kunde-selvregistrering-frontend:latest as client
+FROM fintlabsacr.azurecr.io/kunde-selvregistrering-backend:latest as client
 
 FROM gradle:6.7.1-jdk11 as builder
 USER root
