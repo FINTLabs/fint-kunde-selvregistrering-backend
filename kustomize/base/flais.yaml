@@ -1,20 +1,20 @@
 apiVersion: fintlabs.no/v1alpha1
 kind: Application
 metadata:
-  name: fint-kunde-selvregistrering-frontend
+  name: fint-kunde-selvregistrering-backend
   namespace: fintlabs-no
   labels:
-    app.kubernetes.io/name: fint-kunde-selvregistrering-frontend
-    app.kubernetes.io/instance: fint-kunde-selvregistrering-frontend_fintlabs_no
+    app.kubernetes.io/name: fint-kunde-selvregistrering-backend
+    app.kubernetes.io/instance: fint-kunde-selvregistrering-backend_fintlabs_no
     app.kubernetes.io/version: latest
-    app.kubernetes.io/component: frontend
+    app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: fint-core
     fintlabs.no/team: core
     fintlabs.no/org-id: fintlabs.no
 spec:
   port: 8080
   orgId: fintlabs.no
-  image: ghcr.io/fintlabs/fint-kunde-selvregistrering-frontend:latest
+  image: ghcr.io/fintlabs/fint-kunde-selvregistrering-backend:latest
   imagePullPolicy: Always
   resources:
     limits:
