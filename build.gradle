@@ -47,3 +47,8 @@ dependencies {
     testImplementation "org.spockframework:spock-core:2.0-M4-groovy-2.5"
     //testImplementation "cglib:cglib-nodep:3.3.0"
 }
+
+jar{
+    enabled = true
+    onlyIf {false}
+}
