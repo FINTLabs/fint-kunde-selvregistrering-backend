@@ -1,8 +1,8 @@
 package no.fint.portal.selfregister.controller;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+//import io.swagger.annotations.Api;
+//import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.portal.exceptions.EntityFoundException;
 import no.fint.portal.exceptions.EntityNotFoundException;
@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 
 @Slf4j
 @RestController
-@Api(tags = "Self Register")
+//@Api(tags = "Self Register")
 @RequestMapping(value = "/api/self/register")
 public class RegisterController {
 
@@ -32,7 +32,7 @@ public class RegisterController {
     }
 
 
-    @ApiOperation("Add new contact")
+//    @ApiOperation("Add new contact")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> addContact(
             @RequestHeader(name = "x-nin") String nin,
@@ -41,7 +41,6 @@ public class RegisterController {
             throw new UpdateEntityMismatchException("Invalid NIN");
         }
         log.info("Contact: {}", contact);
-
         if (contactService.addContact(contact)) {
             return ResponseEntity.status(HttpStatus.CREATED).body(contact);
         }
@@ -53,7 +52,7 @@ public class RegisterController {
         );
     }
 
-    @ApiOperation("Update contact")
+//    @ApiOperation("Update contact")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Contact> updateContact(
             @RequestHeader(name = "x-nin") String nin,
