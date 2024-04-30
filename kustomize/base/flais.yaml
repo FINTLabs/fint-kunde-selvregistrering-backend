@@ -18,6 +18,9 @@ spec:
   envFrom:
     - secretRef:
         name: fint-portal-user
+  url:
+    hostname: registrering.felleskomponent.no
+    basePath: /api
   ingress:
     enabled: true
     middlewares:
