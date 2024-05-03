@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
 @Slf4j
 @RestController
 //@Api(tags = "Self Register")
-@RequestMapping(value = "/api/self/register")
+@RequestMapping(value = "/self/register")
 public class RegisterController {
 
     private final ContactService contactService;
